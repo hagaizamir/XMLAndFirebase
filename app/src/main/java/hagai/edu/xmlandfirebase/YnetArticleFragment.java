@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import hagai.edu.xmlandfirebase.dummy.DummyContent;
 import hagai.edu.xmlandfirebase.dummy.DummyContent.DummyItem;
+import hagai.edu.xmlandfirebase.dummy.YnetDataSource;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ import java.util.List;
  * <p/>
  * interface.
  */
-public class YnetArticleFragment extends Fragment {
+public class YnetArticleFragment extends Fragment implements YnetDataSource.OnYnetArrivedListener {
 
 
     @Override
@@ -33,11 +34,15 @@ public class YnetArticleFragment extends Fragment {
 
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_ynetarticle_list, container, false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        YnetDataSource.getYnet(this);
         recyclerView.setAdapter(new YnetRecyclerAdapter(DummyContent.ITEMS));
 
         return recyclerView;
     }
 
 
+    @Override
+    public void OnYnetArrived(List<YnetDataSource.Ynet> data, Exception e) {
+
+    }
 }
