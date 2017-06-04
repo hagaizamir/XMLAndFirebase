@@ -18,14 +18,15 @@ import java.util.concurrent.Executors;
 import hagai.edu.xmlandfirebase.IO;
 
 /**
- * Created by Hagai Zamir on 02-Jun-17.
+ Another data source
  */
 
 public class YnetDataSource {
-    public  interface  OnYnetArrivedListener {
-        void  OnYnetArrived (List<Ynet> data , Exception e);
+    public interface OnYnetArrivedListener{
+        void onYnetArrived(List<Ynet> data, Exception e);
     }
-    public  static  void  getYnet (OnYnetArrivedListener listener){
+
+    public static void getYnet(OnYnetArrivedListener listener){
         //service = Executor.newSingleThread
         ExecutorService service = Executors.newSingleThreadExecutor();
         //service->run
@@ -33,73 +34,78 @@ public class YnetDataSource {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://www.ynet.co.il/Integration/StoryRss1854.xml");
+                    URL url = new URL("http://www.ynet.co.il/Integration/StoryRss2.xml");
                     URLConnection con = url.openConnection();
                     InputStream in = con.getInputStream();
-                    String xml = IO.read(in , "Windows-1255");
-                    List<Ynet> data = parse (xml);
-
-
-                } catch (Exception e) {
+                    String xml = IO.read(in, "Windows-1255");
+                    List<Ynet> data = parse(xml);
+                }
+                catch (Exception e){
                     e.printStackTrace();
-
                 }
             }
         });
         //URL url = new URL(...)
-        //con = url.openConnection
-        //InputStream i n = con.get
-        //List
+        //con = url.openConnection();
+        //InputStream in  = con.getInputStream()//Binary
+        //String xml = IO.read(in);//character-encoding Windows-1255
+        //List<Ynet> data = parse(xml);
+        //listener.notify
     }
 
     private static List<Ynet> parse(String xml) {
         List<Ynet> data = new ArrayList<>();
+
         Document document = Jsoup.parse(xml);
 
         Elements items = document.getElementsByTag("item");
-        for (Element item : items){
-            String title = item.getElementsByTag("item").get(0).text().replace("<![CDATA[ ","").replace("]]>","");
-            Document descriptionElement = Jsoup.parse(xml);
-            String href = descriptionElement.getElementsByTag("description").get(0).attr("href");
-            String src = descriptionElement.getElementsByTag("link").get(0).attr("src");
-            Log.d("Ness" , "Title"  + title);
+        for (Element item : items) {
+            String title = item.getElementsByTag("title").get(0).text()
+                    .replace("<![CDATA[", "")
+                    .replace("]]>", "");
+            //<div><img><a> text that descibes the article</div>
+            String description = item.getElementsByTag("description").get(0).text();
+            Document descriptionElement = Jsoup.parse(description);
+            String href = descriptionElement.getElementsByTag("a").get(0).attr("href");
+            String src = descriptionElement.getElementsByTag("img").get(0).attr("src");
+            description = descriptionElement.text();
 
+            Ynet ynet = new Ynet(title, href, description, src);
+            data.add(ynet);
+            Log.d("Ness", ynet.toString());
         }
 
+        return data;
     }
 
-    public  static  class  Ynet{
-        private  String title;
-        private  String link;
-        private  String description;
-        private  String image;
-
-        //constructor
+    public static class Ynet{
+        private String title;
+        private String link;
+        private String description;
+        private String image;
+        //Constructor
         public Ynet(String title, String link, String description, String image) {
             this.title = title;
             this.link = link;
             this.description = description;
             this.image = image;
         }
-        //getters
+
+        //Getters
         public String getTitle() {
             return title;
         }
-
         public String getLink() {
             return link;
         }
-
         public String getDescription() {
             return description;
         }
-
         public String getImage() {
             return image;
         }
 
         //toString
-
         @Override
         public String toString() {
             return "Ynet{" +
