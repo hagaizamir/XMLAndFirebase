@@ -3,6 +3,8 @@ package hagai.edu.xmlandfirebase;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -52,7 +54,7 @@ public class YnetArticleFragment extends Fragment implements YnetDataSource.OnYn
             @Override
             public void run() {
                 if (e == null)
-                    Toast.makeText(getContext(), data.toString(), Toast.LENGTH_SHORT).show();
+                    recyclerView.setAdapter(new YnetAdapter(data,getActivity()));
                 else
                     Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -79,7 +81,11 @@ public class YnetArticleFragment extends Fragment implements YnetDataSource.OnYn
 
         @Override
         public YnetViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
+            //inflate a single item -> View
+            View v = inflater.inflate(R.layout.ynet_item, parent, false);
+            //return a new View Holder
+
+            return new YnetViewHolder(v);
         }
 
         @Override
@@ -96,7 +102,7 @@ public class YnetArticleFragment extends Fragment implements YnetDataSource.OnYn
             return data.size();
         }
 
-        class YnetViewHolder extends RecyclerView.ViewHolder{
+        class YnetViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             ImageView ivThumbnail;
             TextView tvTitle;
             TextView tvContent;
@@ -107,6 +113,20 @@ public class YnetArticleFragment extends Fragment implements YnetDataSource.OnYn
                 ivThumbnail = (ImageView) itemView.findViewById(R.id.ivThumbnail);
                 tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
                 tvContent = (TextView) itemView.findViewById(R.id.tvContent);
+                v.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (context instanceof AppCompatActivity){
+                    FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
+                    YnetDetailFragment detailFragment = new YnetDetailFragment();
+                    fm.beginTransaction().
+                            replace(R.id.frame,detailFragment).
+                            addToBackStack("details").
+                            commit();
+                }
+
             }
         }
 
