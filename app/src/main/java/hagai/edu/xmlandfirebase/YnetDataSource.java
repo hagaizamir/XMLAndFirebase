@@ -1,4 +1,4 @@
-package hagai.edu.xmlandfirebase.dummy;
+package hagai.edu.xmlandfirebase;
 
 import android.util.Log;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 import hagai.edu.xmlandfirebase.IO;
 
 /**
- Another data source
+ * Created by Hagai Zamir on 02-Jun-17.
  */
 
 public class YnetDataSource {
@@ -26,7 +26,7 @@ public class YnetDataSource {
         void onYnetArrived(List<Ynet> data, Exception e);
     }
 
-    public static void getYnet(OnYnetArrivedListener listener){
+    public static void getYnet(final OnYnetArrivedListener listener){
         //service = Executor.newSingleThread
         ExecutorService service = Executors.newSingleThreadExecutor();
         //service->run
@@ -39,9 +39,11 @@ public class YnetDataSource {
                     InputStream in = con.getInputStream();
                     String xml = IO.read(in, "Windows-1255");
                     List<Ynet> data = parse(xml);
+                    listener.onYnetArrived(data, null);
                 }
                 catch (Exception e){
                     e.printStackTrace();
+                    listener.onYnetArrived(null, e);
                 }
             }
         });
@@ -70,6 +72,7 @@ public class YnetDataSource {
             String src = descriptionElement.getElementsByTag("img").get(0).attr("src");
             description = descriptionElement.text();
 
+            //document.select("img[href~")
             Ynet ynet = new Ynet(title, href, description, src);
             data.add(ynet);
             Log.d("Ness", ynet.toString());

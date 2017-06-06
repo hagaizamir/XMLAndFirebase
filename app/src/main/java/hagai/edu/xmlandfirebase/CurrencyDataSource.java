@@ -8,16 +8,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-/**
- * Created by Hagai Zamir on 02-Jun-17.
- */
+import java.net.URL;
 
 public class CurrencyDataSource {
     public interface OnCurrencyArrivedListener{
