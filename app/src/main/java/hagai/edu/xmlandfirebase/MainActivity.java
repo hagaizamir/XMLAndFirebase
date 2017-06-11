@@ -81,6 +81,15 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (id){
+            case  R.id.action_settings:
+                return true;
+            case  R.id.action_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                return true;
+
+        }
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
