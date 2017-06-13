@@ -1,33 +1,47 @@
 package hagai.edu.xmlandfirebase;
 
+import android.animation.Animator;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapText;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
-    @BindView(R.id.btnLogin)
-    BootstrapButton btnLogin;
-    @BindView(R.id.btnRgister)
-    BootstrapButton btnReigster;
+    @BindView(R.id.btnVerify)
+    BootstrapButton btnVerify;
+    @BindView(R.id.btnGoogle)
+    SignInButton btnGoogle;
     //Properties:
     private FirebaseAuth mAuth;
-
+    @BindView(R.id.btnLogin)
+    BootstrapButton btnLogin;
+    @BindView(R.id.btnReigster)
+    BootstrapButton btnReigster;
+    @BindView(R.id.ivLogo)
+    ImageView ivLogo;
+    @BindView(R.id.tilEmail)
+    TextInputLayout tilEmail;
+    @BindView(R.id.tilPassword)
+    TextInputLayout tilPassword;
     @BindView(R.id.etEmail)
     EditText etEmail;
     @BindView(R.id.etPassword)
@@ -38,12 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-
-        BootstrapText text = new BootstrapText.
-                Builder(this).addText("Hello").
-                addFontAwesomeIcon("fa_user").build();
-
-        btnReigster.setBootstrapText(text);
 
         mAuth = FirebaseAuth.getInstance();
     }
@@ -90,7 +98,42 @@ public class LoginActivity extends AppCompatActivity {
     OnSuccessListener<AuthResult> onSuccessListener = new OnSuccessListener<AuthResult>() {
         @Override
         public void onSuccess(AuthResult authResult) {
-            gotoMain();
+            showProgress(false);
+            btnReigster.animate().
+                    alpha(0).
+                    rotation(360).
+                    setListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            btnLogin.setVisibility(View.GONE);
+                            btnReigster.setVisibility(View.GONE);
+                            etPassword.setVisibility(View.GONE);
+                            etEmail.setVisibility(View.GONE);
+                            tilEmail.setVisibility(View.GONE);
+                            tilPassword.setVisibility(View.GONE);
+
+                            btnVerify.setVisibility(View.VISIBLE);
+                            btnVerify.animate().scaleX(2).scaleY(2);
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+
+
+            //  gotoMain();
         }
     };
 
@@ -113,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
         //Lazy Loading... Not initialized in onCreate/start
         if (dialog == null) {
             dialog = new ProgressDialog(this);
-            //TODO: Dismiss
+            dialog.setCancelable(false);
             dialog.setMessage("Logging You In");
             dialog.setTitle("Connecting...");
         }
@@ -153,16 +196,51 @@ public class LoginActivity extends AppCompatActivity {
         String password = getPassword();
         //isEmail valid
         //isPassword valid
-        return !isEmailValid() | !isPasswordValid();
+        return isEmailValid() & isPasswordValid();
 
     }
 
-    @OnClick(R.id.btnRgister)
+    @OnClick(R.id.btnReigster)
     public void register() {
         if (!validateForm()) return;
         showProgress(true);
         mAuth.createUserWithEmailAndPassword(getEmail(), getPassword()).
                 addOnFailureListener(onFailureListener).
                 addOnSuccessListener(onSuccessListener);
+    }
+
+    boolean sent = false;
+
+    @OnClick(R.id.btnVerify)
+    public void onBtnVerifyClicked() {
+        final FirebaseUser user = mAuth.getCurrentUser();
+
+        if (!sent) {
+            if (user == null) return; //we hates nulls.
+
+            user.sendEmailVerification();
+            Toast.makeText(this, "Sent", Toast.LENGTH_SHORT).show();
+            sent = true;
+
+            btnVerify.setText("Refresh");
+
+        } else {
+            user.reload().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    if (user.isEmailVerified())
+                        gotoMain();
+                }
+            });
+        }
+        //user.isEmailValid()
+        //user.sendEmailVerification()
+        //user.reload()
+    }
+
+    @OnClick(R.id.btnGoogle)
+    public void onViewClicked() {
+        //Intent...GoogleApiClient
+        //startActivityForResult
     }
 }

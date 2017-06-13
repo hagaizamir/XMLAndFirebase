@@ -2,129 +2,137 @@
 <android.support.design.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="hagai.edu.xmlandfirebase.LoginActivity">
+    tools:context="hagai.edu.xmlandfirebase.LoginActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/ivLogo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/touchicon_180" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilPassword"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo">
-
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:hint="Password..."
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etEmail" />
-    </android.support.design.widget.TextInputLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/touchicon_180" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tilEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/tilPassword">
-
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:hint="Email..."
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+            android:layout_marginRight="16dp"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_marginLeft="16dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:id="@+id/tilEmail">
 
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/btnRgister"
-        android:layout_width="176dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        app:bootstrapText="Register {fa_user}"
-        android:textSize="18sp"
-        app:animated="true"
-        app:bootstrapBrand="warning"
-        app:bootstrapSize="lg"
-        app:buttonMode="regular"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/btnLogin"
-        app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email..."
+                android:inputType="textEmailAddress" />
+        </android.support.design.widget.TextInputLayout>
 
-        app:roundedCorners="true"
-        app:showOutline="true"
-        app:striped="true"
-        tools:layout_editor_absoluteX="-12dp"
-        tools:text="Register" />
-
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/btnLogin"
-        android:layout_width="176dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:textSize="18sp"
-        app:animated="true"
-        app:bootstrapBrand="warning"
-        app:bootstrapSize="lg"
-        app:bootstrapText="Login {fa_sign_in}"
-        app:buttonMode="regular"
-        app:layout_constraintLeft_toRightOf="@+id/btnRgister"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilEmail"
-        app:roundedCorners="true"
-        app:showOutline="false"
-        app:striped="true"
-        tools:text="Login" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tilPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintLeft_toLeftOf="@+id/tilEmail"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+            android:layout_marginEnd="16dp">
 
 
-</android.support.constraint.ConstraintLayout>
+
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Password..."
+                android:inputType="textPassword" />
+        </android.support.design.widget.TextInputLayout>
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:bootstrapText="Login {fa_sign_in}"
+            app:bootstrapBrand="warning"
+            app:bootstrapSize="lg"
+            app:buttonMode="regular"
+            app:showOutline="false"
+            app:roundedCorners="true"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/tilPassword"
+            app:layout_constraintRight_toRightOf="@+id/tilPassword"
+            app:layout_constraintLeft_toRightOf="@+id/btnReigster"
+            android:id="@+id/btnLogin"
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="8dp" />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btnReigster"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:bootstrapBrand="warning"
+            app:bootstrapSize="lg"
+            app:bootstrapText="Register {fa_user}"
+            app:buttonMode="regular"
+            app:layout_constraintLeft_toLeftOf="@+id/tilPassword"
+            app:layout_constraintTop_toBottomOf="@+id/tilPassword"
+            app:roundedCorners="true"
+            app:showOutline="false"
+            app:layout_constraintRight_toLeftOf="@+id/btnLogin"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="8dp" />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btnVerify"
+            app:bootstrapSize="lg"
+            android:visibility="gone"
+            app:bootstrapText="Verify"
+            app:bootstrapBrand="info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <com.google.android.gms.common.SignInButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnGoogle"
+
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+
+
+
+            ></com.google.android.gms.common.SignInButton>
+
+
+
+    </android.support.constraint.ConstraintLayout>
+
+
 </android.support.design.widget.CoordinatorLayout>
 
