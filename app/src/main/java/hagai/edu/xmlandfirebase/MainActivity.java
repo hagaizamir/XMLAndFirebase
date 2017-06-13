@@ -3,6 +3,7 @@ package hagai.edu.xmlandfirebase;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RestrictTo;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -15,10 +16,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.Scopes;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int RC_SIGN_IN = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +35,25 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser()== null ||
-                !firebaseAuth.getCurrentUser().isEmailVerified()){
-                    Intent intent = new Intent(MainActivity.this , LoginActivity.class);
-                    startActivity(intent);
 
-                }
-            }
-        });
+        //TODO: Consider android LifeCycle.
+        FirebaseAuth.getInstance().
+                addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        if (firebaseAuth.getCurrentUser() == null){
+//                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            startActivity(intent);
+                            //finish();//close the current activity
+
+
+                            authUI();
+                        }
+                    }
+                });
+
+
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -57,6 +74,29 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
+
+    private void authUI() {
+        List<AuthUI.IdpConfig> providers = new ArrayList<>();
+        AuthUI.IdpConfig google = new AuthUI.IdpConfig.
+                Builder(AuthUI.GOOGLE_PROVIDER).
+                setPermissions(
+                        Arrays.asList(Scopes.PROFILE, Scopes.EMAIL)
+                ).build();
+
+        AuthUI.IdpConfig email = new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build();
+
+        providers.add(google);
+        providers.add(email);
+
+        Intent intent = AuthUI.
+                getInstance().
+                createSignInIntentBuilder().
+                setProviders(providers).build();
+
+        startActivityForResult(intent, RC_SIGN_IN);
+
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -82,39 +122,34 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (id){
-            case  R.id.action_settings:
+        switch (id) {
+            case R.id.action_settings:
                 return true;
-            case  R.id.action_sign_out:
+            case R.id.action_sign_out:
                 FirebaseAuth.getInstance().signOut();
                 return true;
-
-        }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-
         switch (id) {
             case R.id.nav_camera:
+
                 getSupportFragmentManager().
                         beginTransaction().
                         replace(R.id.frame, new YnetArticleFragment()).
                         commit();
-                // Handle the camera action
+
                 break;
             case R.id.nav_gallery:
+
                 getSupportFragmentManager().
                         beginTransaction().
                         replace(R.id.frame, new CurrencyFragment()).
