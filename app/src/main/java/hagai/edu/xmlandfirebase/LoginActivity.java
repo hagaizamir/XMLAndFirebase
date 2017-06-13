@@ -14,7 +14,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
@@ -25,12 +29,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private static final int RC_SIGN_IN = 1;
     @BindView(R.id.btnVerify)
     BootstrapButton btnVerify;
     @BindView(R.id.btnGoogle)
     SignInButton btnGoogle;
+
     //Properties:
+    private GoogleApiClient mApiClient;//Take away
     private FirebaseAuth mAuth;
     @BindView(R.id.btnLogin)
     BootstrapButton btnLogin;
@@ -54,6 +61,21 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mAuth = FirebaseAuth.getInstance();
+
+        GoogleApiClient.Builder builder = new GoogleApiClient.Builder(this);
+        builder.enableAutoManage(
+                this/*Activity for onPause / Resume*/,
+                this /*FailureListener*/);
+
+        GoogleSignInOptions gso =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestProfile()
+                .build();
+
+        builder.addApi(Auth.GOOGLE_SIGN_IN_API, gso);
+
+        mApiClient = builder.build();
     }
 
 
@@ -241,6 +263,20 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.btnGoogle)
     public void onViewClicked() {
         //Intent...GoogleApiClient
+        Intent gsIntent = Auth.GoogleSignInApi.getSignInIntent(mApiClient);
         //startActivityForResult
+        startActivityForResult(gsIntent,RC_SIGN_IN);
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show();
     }
 }
