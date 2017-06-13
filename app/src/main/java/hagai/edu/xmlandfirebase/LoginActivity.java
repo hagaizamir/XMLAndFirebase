@@ -15,15 +15,19 @@ import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,10 +71,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 this/*Activity for onPause / Resume*/,
                 this /*FailureListener*/);
 
+//Configurate google sign in
         GoogleSignInOptions gso =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestProfile()
+                .requestEmail()
                 .build();
 
         builder.addApi(Auth.GOOGLE_SIGN_IN_API, gso);
@@ -273,6 +279,38 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == RC_SIGN_IN){
+            GoogleSignInResult result =  Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()){
+                //GoogleAccount.
+                GoogleSignInAccount account = result.getSignInAccount();
+                //Firebase Credentials
+                AuthCredential authCredential = GoogleAuthProvider.getCredential(
+                        account.getIdToken(),null);
+
+                //send the result to firebase
+                mAuth.signInWithCredential(authCredential).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        gotoMain();
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showError(e);
+                    }
+                });
+
+            } else {
+                Toast.makeText(this, "Canceled" , Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+
     }
 
     @Override
